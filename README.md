@@ -179,3 +179,19 @@ After changing the configuration, restart the site (e.g., with `docker-compose d
 
 - Document configuration for LDAP/AD integration.
 - Implement & document CADD Scripts Server Setup
+
+## Maintainer Info
+
+This section section is only interesting for maintainers of `varfish-docker-compose`.
+
+Install the Github CLI using snap.
+
+```
+$ sudo snap install --edge gh
+```
+
+### Creating a new Release
+
+1. Create a new entry in `HISTORY.md` and commit.
+2. Create a new tag: `git tag vXX`.
+3. Push the tag and release: `make release`.
