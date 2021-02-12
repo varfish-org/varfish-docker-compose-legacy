@@ -184,14 +184,13 @@ After changing the configuration, restart the site (e.g., with `docker-compose d
 
 This section section is only interesting for maintainers of `varfish-docker-compose`.
 
-Install the Github CLI using snap.
-
-```
-$ sudo snap install --edge gh
-```
+Install the Github CLI ([see instructions](https://github.com/cli/cli#installation)), then login with `gh auth login`.
 
 ### Creating a new Release
 
+Use `${varfish-server-version}-${build-version}` as the tag name for `varfish-docker-compose`.
+This allows people to easily track if something changed here but the `varfish-server` version is the same.
+
 1. Create a new entry in `HISTORY.md` and commit.
-2. Create a new tag: `git tag vXX`.
+2. Create a new tag: `make tag TAG=vxx`.
 3. Push the tag and release: `make release`.
