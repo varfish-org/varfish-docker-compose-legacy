@@ -1,0 +1,8 @@
+# /etc/traefik/ssl
+
+Place your SSL files in this directory. The `docker-compose.yaml` will make
+them available in `/etc/traefik/tls` and `../certificates.toml` wil use them
+for certificates.
+
+- `server.crt` -- server TLS/SSL certificate (chain)
+- `server.key` -- unencryptedTLS/SSL private key

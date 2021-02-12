@@ -1,0 +1,187 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.3.1
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - varfish
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+#      # BEGIN: settings:production-letsencrypt
+#      - "--entrypoints.web.address=:80"
+#      - "--entrypoints.websecure.address=:443"
+#      - "--certificatesresolvers.le.acme.email=YOUR_EMAIL@YOUR_DOMAIN.com"  # <-- ADJUST
+#      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+#      - "--certificatesresolvers.le.acme.tlschallenge=true"
+#      # END: settings:production-letsencrypt
+#      # BEGIN: settings:production-provide-certificate
+#       - "--providers.file.directory=/etc/traefik"
+#       - "--providers.file.watch=true"
+#      # END: settings:production-provide-certificate
+    volumes:
+      - "./volumes/traefik/letsencrypt:/letsencrypt:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+#      # BEGIN: settings:production-provide-certificate
+#      - "./config/traefik:/etc/traefik:ro"
+#      # END: settings:production-provide-certificate
+    labels:
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.redirs.entrypoints=web"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+
+  varfish-web:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    networks:
+      - varfish
+    restart: unless-stopped
+    volumes:
+      - "/root/varfish-server-background-db-20201006:/data:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.varfish-web.entrypoints=websecure"
+      - "traefik.http.routers.varfish-web.middlewares=xforward"
+      - "traefik.http.routers.varfish-web.rule=HostRegexp(`{catchall:.+}`)"
+      - "traefik.http.services.varfish-web.loadbalancer.server.port=8080"
+      # BEGIN: settings:production-provide-certificate OR settings:testing
+      - "traefik.http.routers.varfish-web.tls=true"
+      # BEGIN: settings:production-provide-certificate OR settings:testing
+#      # END: settings:production-letsencrypt
+#      - "traefik.http.routers.varfish-web.tls.certresolver=le"
+#      # END: settings:production-letsencrypt
+
+  varfish-celerybeat:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celerybeat"]
+    networks:
+      - varfish
+    depends_on:
+      - varfish-web
+    restart: unless-stopped
+
+  varfish-celeryd-default:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celeryd"]
+    environment:
+      - CELERY_QUEUES=default
+      - CELERY_WORKERS=16
+    depends_on:
+      - varfish-web
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  varfish-celeryd-query:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celeryd"]
+    environment:
+      - CELERY_QUEUES=query
+      - CELERY_WORKERS=16
+    depends_on:
+      - varfish-web
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  varfish-celeryd-import:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celeryd"]
+    environment:
+      - CELERY_QUEUES=import
+      - CELERY_WORKERS=4
+    depends_on:
+      - varfish-web
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  jannovar:
+    image: quay.io/biocontainers/jannovar-cli:${JANNOVAR_VERSION}
+    command: [
+        "jannovar", "-Xmx6G", "-Xms2G",
+        "rest-server", "--host", "0.0.0.0", "--port", "80",
+        "-d", "/data/hg19_ensembl.ser",
+        "-d", "/data/hg19_refseq.ser",
+        "-d", "/data/hg19_refseq_curated.ser",
+    ]
+    volumes:
+      - type: bind
+        source: ./volumes/jannovar
+        target: /data
+        read_only: true
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  exomiser-rest-prioritiser:
+    image: quay.io/biocontainers/exomiser-rest-prioritiser:${EXOMISER_VERSION}
+    command: [
+        "exomiser-rest-prioritiser", "-Xmx6G", "-Xms2G", "-Dserver.address=0.0.0.0",
+        "-Dserver.port=80",
+    ]
+    volumes:
+      - type: bind
+        source: ./config/exomiser/application.properties
+        target: /application.properties
+        read_only: true
+      - type: bind
+        source: ./volumes/exomiser
+        target: /data
+        read_only: true
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  minio:  # minio does not like being tagged
+    image: minio/minio
+    env_file:
+      - .env
+    command: ["server", "/data"]
+    volumes:
+      - type: bind
+        source: ./volumes/minio
+        target: /data
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:12
+    env_file:
+      - .env
+    networks:
+      - varfish
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./volumes/postgres/data
+        target: /var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    networks:
+      - varfish
+    restart: unless-stopped
+    volumes:
+      - "./volumes/redis/data:/data:rw"
+
+networks:
+  varfish:
