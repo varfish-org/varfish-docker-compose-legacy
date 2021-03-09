@@ -99,6 +99,20 @@ services:
       - varfish
     restart: unless-stopped
 
+  varfish-celeryd-export:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celeryd"]
+    environment:
+      - CELERY_QUEUES=export
+      - CELERY_WORKERS=8
+    depends_on:
+      - varfish-web
+    networks:
+      - varfish
+    restart: unless-stopped
+
   varfish-celeryd-import:
     image: bihealth/varfish-server:${VARFISH_VERSION}
     env_file:
@@ -107,6 +121,20 @@ services:
     environment:
       - CELERY_QUEUES=import
       - CELERY_WORKERS=4
+    depends_on:
+      - varfish-web
+    networks:
+      - varfish
+    restart: unless-stopped
+
+  varfish-celeryd-maintenance:
+    image: bihealth/varfish-server:${VARFISH_VERSION}
+    env_file:
+      - .env
+    command: ["celeryd"]
+    environment:
+      - CELERY_QUEUES=maintenance
+      - CELERY_WORKERS=8
     depends_on:
       - varfish-web
     networks:
@@ -189,7 +217,7 @@ services:
 #   #
 #   # You will need "cadd-rest-api-server" and "cadd-rest-api-celeryd-worker-*".
 #   cadd-rest-api-server:
-#     image: bihealth/cadd-rest-api:0.3.4-0
+#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
 #     env_file: cadd-rest-api.env
 #     command: ["wsgi"]
 #     networks:
@@ -204,7 +232,7 @@ services:
 #   # You have to provide multiple cadd-rest-api-celeryd-worker container if
 #   # you want to handle more than one query at a time.
 #   cadd-rest-api-celeryd-worker-1:
-#     image: bihealth/cadd-rest-api:0.3.4-0
+#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
 #     env_file: cadd-rest-api.env
 #     command: ["celeryd"]
 #     networks: [varfish]
@@ -214,7 +242,7 @@ services:
 #       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
 #       - "./volumes/cadd-rest-api/db:/data/db:rw"
 #   cadd-rest-api-celeryd-worker-2:
-#     image: bihealth/cadd-rest-api:0.3.4-0
+#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
 #     env_file: cadd-rest-api.env
 #     command: ["celeryd"]
 #     networks: [varfish]
@@ -224,7 +252,7 @@ services:
 #       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
 #       - "./volumes/cadd-rest-api/db:/data/db:rw"
 #   cadd-rest-api-celeryd-worker-3:
-#     image: bihealth/cadd-rest-api:0.3.4-0
+#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
 #     env_file: cadd-rest-api.env
 #     command: ["celeryd"]
 #     networks: [varfish]
@@ -234,7 +262,7 @@ services:
 #       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
 #       - "./volumes/cadd-rest-api/db:/data/db:rw"
 #   cadd-rest-api-celeryd-worker-4:
-#     image: bihealth/cadd-rest-api:0.3.4-0
+#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
 #     env_file: cadd-rest-api.env
 #     command: ["celeryd"]
 #     networks: [varfish]
