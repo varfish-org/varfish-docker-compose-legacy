@@ -183,5 +183,66 @@ services:
     volumes:
       - "./volumes/redis/data:/data:rw"
 
+#   # Uncomment the following lines to enable the CADD REST API server that
+#   # is used for variant prioritization using the CADD score.  We need both
+#   # the server and the CADD-based worker.
+#   #
+#   # You will need "cadd-rest-api-server" and "cadd-rest-api-celeryd-worker-*".
+#   cadd-rest-api-server:
+#     image: bihealth/cadd-rest-api:0.3.4-0
+#     env_file: cadd-rest-api.env
+#     command: ["wsgi"]
+#     networks:
+#       - varfish
+#     restart: unless-stopped
+#     volumes:
+#       - type: bind
+#         source: ./volumes/cadd-rest-api/db
+#         target: /data/db
+#         read_only: false
+#
+#   # You have to provide multiple cadd-rest-api-celeryd-worker container if
+#   # you want to handle more than one query at a time.
+#   cadd-rest-api-celeryd-worker-1:
+#     image: bihealth/cadd-rest-api:0.3.4-0
+#     env_file: cadd-rest-api.env
+#     command: ["celeryd"]
+#     networks: [varfish]
+#     restart: unless-stopped
+#     volumes:
+#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
+#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
+#       - "./volumes/cadd-rest-api/db:/data/db:rw"
+#   cadd-rest-api-celeryd-worker-2:
+#     image: bihealth/cadd-rest-api:0.3.4-0
+#     env_file: cadd-rest-api.env
+#     command: ["celeryd"]
+#     networks: [varfish]
+#     restart: unless-stopped
+#     volumes:
+#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
+#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
+#       - "./volumes/cadd-rest-api/db:/data/db:rw"
+#   cadd-rest-api-celeryd-worker-3:
+#     image: bihealth/cadd-rest-api:0.3.4-0
+#     env_file: cadd-rest-api.env
+#     command: ["celeryd"]
+#     networks: [varfish]
+#     restart: unless-stopped
+#     volumes:
+#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
+#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
+#       - "./volumes/cadd-rest-api/db:/data/db:rw"
+#   cadd-rest-api-celeryd-worker-4:
+#     image: bihealth/cadd-rest-api:0.3.4-0
+#     env_file: cadd-rest-api.env
+#     command: ["celeryd"]
+#     networks: [varfish]
+#     restart: unless-stopped
+#     volumes:
+#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
+#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
+#       - "./volumes/cadd-rest-api/db:/data/db:rw"
+
 networks:
   varfish:
