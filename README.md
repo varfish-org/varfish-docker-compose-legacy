@@ -176,10 +176,13 @@ The setup uses [traefik](https://traefik.io/) as a reverse proxy and must be rec
 
 After changing the configuration, restart the site (e.g., with `docker-compose down && docker-compose up -d` if it is runnin in detached mode).
 
+## Prioritization with CADD-scripts
+
+See the section "Extra Services" in the [VarFish Server Manual](https://varfish-server.readthedocs.io/en/latest/) for instructions on how to enable this feature.
+
 ## TODO
 
 - Document configuration for LDAP/AD integration.
-- Implement & document CADD Scripts Server Setup
 
 ## Maintainer Info
 
