@@ -49,7 +49,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
-      - "traefik.http.routers.varfish-web.entrypoints=websecure"
+      - "traefik.http.routers.varfish-web.entrypoints=web,websecure"
       - "traefik.http.routers.varfish-web.middlewares=xforward"
       - "traefik.http.routers.varfish-web.rule=HostRegexp(`{catchall:.+}`)"
       - "traefik.http.services.varfish-web.loadbalancer.server.port=8080"
