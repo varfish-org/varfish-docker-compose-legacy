@@ -34,7 +34,8 @@ services:
       - varfish
     restart: unless-stopped
     volumes:
-      - "/root/varfish-server-background-db-20201006:/data:ro"
+      - "/root/varfish-server-background-db-20201006:/data/varfish-server-background-db-20201006:ro"
+      - "./volumes/varfish-web-media:/usr/src/app/varfish/media:rw"
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
@@ -69,6 +70,9 @@ services:
     networks:
       - varfish
     restart: unless-stopped
+    volumes:
+      - "./volumes/varfish-annotator:/data/varfish-annotator:ro"
+      - "./volumes/varfish-web-media:/usr/src/app/varfish/media:rw"
 
   varfish-celeryd-query:
     image: bihealth/varfish-server:${VARFISH_VERSION}
