@@ -17,8 +17,9 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
-      - "--providers.file.directory=/etc/traefik"
-      - "--providers.file.watch=true"
+      - "--certificatesresolvers.le.acme.email=hpc-admin@bihealth.org"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
     volumes:
       - "./volumes/traefik/letsencrypt:/letsencrypt:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -39,9 +40,10 @@ services:
       - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.varfish-web.entrypoints=web,websecure"
       - "traefik.http.routers.varfish-web.middlewares=xforward"
-      - "traefik.http.routers.varfish-web.rule=HostRegexp(`{catchall:.+}`)"
+      - "traefik.http.routers.varfish-web.rule=${TRAEFIK_ROUTER_RULE}"
       - "traefik.http.services.varfish-web.loadbalancer.server.port=8080"
       - "traefik.http.routers.varfish-web.tls=true"
+      - "traefik.http.routers.varfish-web.tls.certresolver=le"
 
   varfish-celerybeat:
     image: bihealth/varfish-server:${VARFISH_VERSION}
