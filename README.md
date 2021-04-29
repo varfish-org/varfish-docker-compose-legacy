@@ -198,3 +198,16 @@ This allows people to easily track if something changed here but the `varfish-se
 1. Create a new entry in `HISTORY.md` and commit.
 2. Create a new tag: `make tag TAG=vxx`.
 3. Push the tag and release: `make release`.
+
+## Branches
+
+The **main** branch is the default branches and what you should track for deployment.
+Individual versions are tagged here and it refers to stable versions only.
+
+### Further Branches
+
+- **dev** -- used for development, might jump around so don't track this
+- **staging** -- used internally, might jump around, don't track this
+- **production** -- used internally, might jump around, don't track this
+- **kiosk** -- used for varfish-kiosk.bihealth.org, might jump around, don't track this
+- **demo** -- used for varfish-demo.bihealth.org, might jump around, don't track this
