@@ -13,6 +13,9 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
 #      # BEGIN: settings:production-letsencrypt
 #      - "--entrypoints.web.address=:80"
@@ -31,11 +34,6 @@ services:
 #      # BEGIN: settings:production-provide-certificate
 #      - "./config/traefik:/etc/traefik:ro"
 #      # END: settings:production-provide-certificate
-    labels:
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.redirs.entrypoints=web"
-      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
-      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
 
   varfish-web:
     image: bihealth/varfish-server:${VARFISH_VERSION}
