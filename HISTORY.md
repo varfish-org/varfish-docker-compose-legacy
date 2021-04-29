@@ -3,7 +3,7 @@
 `varfish-docker-compose` is versioned is tracking the `varfish-server` repository.
 Not all `varfish-server` tags have a corresponding tag in `varfish-docker-compose`, though.
 
-## HEAD (v0.23.4-0)
+## v0.23.4-0
 
 - Bumping to VarFish release v0.23.4
 - Enabling beacon site feature by default (not active unless explicitely configured by admin).
