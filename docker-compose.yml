@@ -191,6 +191,7 @@ services:
 
   postgres:
     image: postgres:12
+    shm_size: 1g
     env_file:
       - .env
     networks:
