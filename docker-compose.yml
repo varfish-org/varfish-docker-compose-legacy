@@ -17,23 +17,8 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
-#      # BEGIN: settings:production-letsencrypt
-#      - "--entrypoints.web.address=:80"
-#      - "--entrypoints.websecure.address=:443"
-#      - "--certificatesresolvers.le.acme.email=YOUR_EMAIL@YOUR_DOMAIN.com"  # <-- ADJUST
-#      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
-#      - "--certificatesresolvers.le.acme.tlschallenge=true"
-#      # END: settings:production-letsencrypt
-#      # BEGIN: settings:production-provide-certificate
-#       - "--providers.file.directory=/etc/traefik"
-#       - "--providers.file.watch=true"
-#      # END: settings:production-provide-certificate
     volumes:
-      - "./volumes/traefik/letsencrypt:/letsencrypt:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-#      # BEGIN: settings:production-provide-certificate
-#      - "./config/traefik:/etc/traefik:ro"
-#      # END: settings:production-provide-certificate
 
   varfish-web:
     image: bihealth/varfish-server:${VARFISH_VERSION}
@@ -51,12 +36,7 @@ services:
       - "traefik.http.routers.varfish-web.middlewares=xforward"
       - "traefik.http.routers.varfish-web.rule=HostRegexp(`{catchall:.+}`)"
       - "traefik.http.services.varfish-web.loadbalancer.server.port=8080"
-      # BEGIN: settings:production-provide-certificate OR settings:testing
       - "traefik.http.routers.varfish-web.tls=true"
-      # BEGIN: settings:production-provide-certificate OR settings:testing
-#      # END: settings:production-letsencrypt
-#      - "traefik.http.routers.varfish-web.tls.certresolver=le"
-#      # END: settings:production-letsencrypt
 
   varfish-celerybeat:
     image: bihealth/varfish-server:${VARFISH_VERSION}
@@ -209,67 +189,6 @@ services:
     restart: unless-stopped
     volumes:
       - "./volumes/redis/data:/data:rw"
-
-#   # Uncomment the following lines to enable the CADD REST API server that
-#   # is used for variant prioritization using the CADD score.  We need both
-#   # the server and the CADD-based worker.
-#   #
-#   # You will need "cadd-rest-api-server" and "cadd-rest-api-celeryd-worker-*".
-#   cadd-rest-api-server:
-#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
-#     env_file: cadd-rest-api.env
-#     command: ["wsgi"]
-#     networks:
-#       - varfish
-#     restart: unless-stopped
-#     volumes:
-#       - type: bind
-#         source: ./volumes/cadd-rest-api/db
-#         target: /data/db
-#         read_only: false
-#
-#   # You have to provide multiple cadd-rest-api-celeryd-worker container if
-#   # you want to handle more than one query at a time.
-#   cadd-rest-api-celeryd-worker-1:
-#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
-#     env_file: cadd-rest-api.env
-#     command: ["celeryd"]
-#     networks: [varfish]
-#     restart: unless-stopped
-#     volumes:
-#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
-#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
-#       - "./volumes/cadd-rest-api/db:/data/db:rw"
-#   cadd-rest-api-celeryd-worker-2:
-#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
-#     env_file: cadd-rest-api.env
-#     command: ["celeryd"]
-#     networks: [varfish]
-#     restart: unless-stopped
-#     volumes:
-#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
-#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
-#       - "./volumes/cadd-rest-api/db:/data/db:rw"
-#   cadd-rest-api-celeryd-worker-3:
-#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
-#     env_file: cadd-rest-api.env
-#     command: ["celeryd"]
-#     networks: [varfish]
-#     restart: unless-stopped
-#     volumes:
-#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
-#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
-#       - "./volumes/cadd-rest-api/db:/data/db:rw"
-#   cadd-rest-api-celeryd-worker-4:
-#     image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
-#     env_file: cadd-rest-api.env
-#     command: ["celeryd"]
-#     networks: [varfish]
-#     restart: unless-stopped
-#     volumes:
-#       - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
-#       - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
-#       - "./volumes/cadd-rest-api/db:/data/db:rw"
 
 networks:
   varfish:

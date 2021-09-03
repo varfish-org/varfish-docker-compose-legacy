@@ -1,0 +1,28 @@
+# Docker Compose override file for TLS with custom, statically generated
+# certificate.
+
+services:
+  traefik:
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.directory=/etc/traefik"
+      - "--providers.file.watch=true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./config/traefik:/etc/traefik:ro"
+
+  varfish-web:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.varfish-web.entrypoints=web,websecure"
+      - "traefik.http.routers.varfish-web.middlewares=xforward"
+      - "traefik.http.routers.varfish-web.rule=HostRegexp(`{catchall:.+}`)"
+      - "traefik.http.services.varfish-web.loadbalancer.server.port=8080"
+      - "traefik.http.routers.varfish-web.tls=true"
