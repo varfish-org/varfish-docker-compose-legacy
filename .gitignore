@@ -1,3 +1,6 @@
+# The Docker Compose "override" YAML file.
+docker-compose.override.yml
+
 # The downloaded volumes
 /volumes/
 
