@@ -1,7 +1,7 @@
 # Docker Compose override file enabling cadd-rest-api.
 
 x-cadd-rest-api-celeryd-worker: &cadd-rest-api-celeryd-worker
-  image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
+  image: bihealth/cadd-rest-api:0.3.4-0
   env_file: cadd-rest-api.env
   command:
     - celeryd
@@ -12,14 +12,14 @@ x-cadd-rest-api-celeryd-worker: &cadd-rest-api-celeryd-worker
     - "./volumes/cadd-rest-api/data/annotations:/opt/miniconda3/share/cadd-scripts-1.6-0/data/annotations:ro"
     - "./volumes/cadd-rest-api/data/prescored:/opt/miniconda3/share/cadd-scripts-1.6-0/data/prescored:ro"
     - "./volumes/cadd-rest-api/db:/data/db:rw"
-  
+
 
 services:
   # We need both # the server and the CADD-based worker.
   #
   # You will need "cadd-rest-api-server" and "cadd-rest-api-celeryd-worker-*".
   cadd-rest-api-server:
-    image: bihealth/cadd-rest-api:${CADD_REST_API_VERSION}
+    image: bihealth/cadd-rest-api:0.3.4-0
     env_file: cadd-rest-api.env
     command:
       - wsgi

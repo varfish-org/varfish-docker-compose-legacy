@@ -21,7 +21,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   varfish-web:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     networks:
@@ -39,7 +39,7 @@ services:
       - "traefik.http.routers.varfish-web.tls=true"
 
   varfish-celerybeat:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celerybeat"]
@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
 
   varfish-celeryd-default:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celeryd"]
@@ -64,7 +64,7 @@ services:
     restart: unless-stopped
 
   varfish-celeryd-query:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celeryd"]
@@ -78,7 +78,7 @@ services:
     restart: unless-stopped
 
   varfish-celeryd-export:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celeryd"]
@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
 
   varfish-celeryd-import:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celeryd"]
@@ -106,7 +106,7 @@ services:
     restart: unless-stopped
 
   varfish-celeryd-maintenance:
-    image: ghcr.io/bihealth/varfish-server:${VARFISH_VERSION}
+    image: ghcr.io/bihealth/varfish-server:0.23.8-0
     env_file:
       - .env
     command: ["celeryd"]
@@ -120,7 +120,7 @@ services:
     restart: unless-stopped
 
   jannovar:
-    image: quay.io/biocontainers/jannovar-cli:${JANNOVAR_VERSION}
+    image: quay.io/biocontainers/jannovar-cli:0.33--0
     command: [
         "jannovar", "-Xmx6G", "-Xms2G",
         "rest-server", "--host", "0.0.0.0", "--port", "80",
@@ -138,7 +138,7 @@ services:
     restart: unless-stopped
 
   exomiser-rest-prioritiser:
-    image: quay.io/biocontainers/exomiser-rest-prioritiser:${EXOMISER_VERSION}
+    image: quay.io/biocontainers/exomiser-rest-prioritiser:12.1.0--1
     command: [
         "exomiser-rest-prioritiser", "-Xmx6G", "-Xms2G", "-Dserver.address=0.0.0.0",
         "-Dserver.port=80",
