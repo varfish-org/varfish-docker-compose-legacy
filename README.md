@@ -67,6 +67,14 @@ exomiser  jannovar  minio  postgres  redis  traefik
 
 ### 3. Bring up the site
 
+First, create an installation-specific configuration file `.env` from `env.example`.
+Make sure to set the `DJANGO_SECRET_KEY` variable to something random (a bash one-liner would be `tr -dc A-Za-z0-9 </dev/urandom | head -c 64 ; echo ''`).
+
+```bash
+$ cp .env env.example
+$ $EDITOR .env
+```
+
 You can now bring up the site with Docker Compose.
 The site will come up at your server and listen on ports 80 and 443 (make sure that the ports are open), you can access it at `https://<your-host>/` in your web browser.
 This will create a lot of output and will not return you to your shell.
