@@ -27,8 +27,8 @@ services:
     networks:
       - varfish
     restart: unless-stopped
-    volumes:
-      - "/root/varfish-server-background-db-20201006:/data:ro"
+#    volumes:
+#      - "/root/varfish-server-background-db-20210728-grch38:/data:ro"
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.xforward.headers.customrequestheaders.X-Forwarded-Proto=https"
@@ -120,13 +120,16 @@ services:
     restart: unless-stopped
 
   jannovar:
-    image: quay.io/biocontainers/jannovar-cli:0.33--0
+    image: quay.io/biocontainers/jannovar-cli:0.35--hdfd78af_1
     command: [
         "jannovar", "-Xmx6G", "-Xms2G",
         "rest-server", "--host", "0.0.0.0", "--port", "80",
         "-d", "/data/hg19_ensembl.ser",
         "-d", "/data/hg19_refseq.ser",
         "-d", "/data/hg19_refseq_curated.ser",
+        "-d", "/data/hg38_ensembl.ser",
+        "-d", "/data/hg38_refseq.ser",
+        "-d", "/data/hg38_refseq_curated.ser",
     ]
     volumes:
       - type: bind
