@@ -58,9 +58,9 @@ Download and extract the VarFish site data archive which contains everything you
 This will create the `volumes` directory (500 GB of data, ZFS compression gives us 193 GB disk usage).
 
 ```bash
-$ wget --no-check-certificate https://file-public.bihealth.org/transient/varfish/varfish-site-data-v0.22.2-20210212.tar.gz{,.sha256}
-$ sha256sum --check varfish-site-data-v0.22.2-20210212.tar.gz.sha256
-$ tar xf varfish-site-data-v0.22.2-20210212.tar.gz
+$ wget --no-check-certificate https://file-public.bihealth.org/transient/varfish/varfish-site-data-v0.23.9-20220209-grch37.tar.gz{,.sha256}
+$ sha256sum --check varfish-site-data-v0.23.9-20220209-grch37.tar.gz.sha256
+$ tar xf varfish-site-data-v0.23.9-20220209-grch37.tar.gz
 $ ls volumes/
 exomiser  jannovar  minio  postgres  redis  traefik
 ```
