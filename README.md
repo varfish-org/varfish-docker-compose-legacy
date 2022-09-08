@@ -219,3 +219,8 @@ Individual versions are tagged here and it refers to stable versions only.
 - **production** -- used internally, might jump around, don't track this
 - **kiosk** -- used for varfish-kiosk.bihealth.org, might jump around, don't track this
 - **demo** -- used for varfish-demo.bihealth.org, might jump around, don't track this
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
