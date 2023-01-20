@@ -195,3 +195,5 @@ services:
 
 networks:
   varfish:
+    driver_opts:
+      com.docker.network.bridge.name: br-varfish
