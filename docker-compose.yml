@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  mehari:
+    image: ghcr.io/bihealth/mehari:0.5.6
+
+  viguno:
+  worker:
+
+# Explicitely configure the "varfish" network so we can control its name.
+networks:
+  varfish:
+    driver_opts:
+      com.docker.network.bridge.name: br-varfish

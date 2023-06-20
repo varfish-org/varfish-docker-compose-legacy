@@ -1,0 +1,11 @@
+## Docker Compose
+# Configuration file.
+.env
+
+# The Docker Compose "override" YAML file.
+docker-compose.override.yml
+
+## Text Editors
+/.vscode
+*~
+.*.sw?
